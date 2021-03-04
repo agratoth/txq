@@ -1,0 +1,12 @@
+.*
+!.git*
+!.coveragerc
+__pycache__
+
+config.yaml
+
+build
+dist
+*.egg*
+
+*_local.sh
