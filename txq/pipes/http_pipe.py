@@ -2,7 +2,7 @@ import json
 
 from aiohttp import web
 
-from txq.messages import BaseMessage, ResponseMessage, SecureMessage
+from txq_messages import BaseMessage, ResponseMessage, SecureMessage
 
 from .base_pipe import BasePipe
 

@@ -6,7 +6,9 @@ from pynsodm.json_ext import encoder
 from txq.apps import App
 from txq.pipes import BasePipe
 from txq.config import Config
-from txq.messages import ResponseMessage
+
+from txq_messages import ResponseMessage
+
 from .messages import AuthUserMessage
 from .messages import CreateUserMessage
 from .messages import UpdateUserMessage

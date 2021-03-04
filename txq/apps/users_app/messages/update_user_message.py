@@ -1,4 +1,4 @@
-from txq.messages import SecureMessage
+from txq_messages import SecureMessage
 
 
 class UpdateUserMessage(SecureMessage):
