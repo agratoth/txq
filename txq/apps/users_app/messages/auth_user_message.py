@@ -1,4 +1,4 @@
-from txq.messages import BaseMessage
+from txq_messages import BaseMessage
 
 
 class AuthUserMessage(BaseMessage):

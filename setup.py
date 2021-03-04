@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='txq',
     zip_safe=True,
-    version='0.1.1',
+    version='0.1.2',
     description='Modular asynchronous application service',
     url='https://github.com/agratoth/txq',
     maintainer='Anton Berdnikov',
@@ -16,7 +16,6 @@ setup(
         'txq.apps.users_app.messages',
         'txq.apps.users_app.models',
         'txq.config',
-        'txq.messages',
         'txq.pipes'
     ],
     package_dir={'txq': 'txq'},
@@ -25,7 +24,8 @@ setup(
         'aiohttp>=3.7.4',
         'nkeys>=0.1.0',
         'asyncio-nats-client>=0.11.4',
-        'pynsodm>=0.3.3'
+        'pynsodm>=0.3.3',
+        'txq-messages>=0.1.0'
     ],
     classifiers=[
         "License :: OSI Approved :: MIT License",
