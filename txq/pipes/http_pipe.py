@@ -1,11 +1,13 @@
 import json
 
 from aiohttp import web
-
+from txq.logging import get_logger
 from txq_messages import BaseMessage, ResponseMessage, SecureMessage
 
 from .base_pipe import BasePipe
 
+
+logger = get_logger(__name__)
 
 class HTTPPipe(BasePipe):
     def __init__(self, **params):
@@ -16,6 +18,8 @@ class HTTPPipe(BasePipe):
         BasePipe.__init__(self, **params)
 
     async def init_pipe(self, app):
+        await BasePipe.init_pipe(self, app)
+
         if self._direction == 'sender':
             pass
         elif self._direction == 'recipient':
@@ -25,11 +29,14 @@ class HTTPPipe(BasePipe):
 
             self._site = web.TCPSite(self._runner, self._host, self._port)
             await self._site.start()
+        logger.info(f'HTTPPipe [{self._app_id}:{self._pipe_id}] - Init complete')
 
     async def shutdown_pipe(self):
         await self._site.stop()
         await self._runner.shutdown()
         await self._server.shutdown()
+
+        logger.info(f'HTTPPipe [{self._app_id}:{self._pipe_id}] - Shutdown complete')
 
     async def send(self, message):
         pass
