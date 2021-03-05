@@ -1,10 +1,15 @@
 import asyncio
+import aiojobs
 import uvloop
 
 from importlib import import_module
 
 from txq.config import Config
 from txq.pipes import BasePipe
+from txq.logging import get_logger
+
+
+logger = get_logger(__name__)
 
 
 class App:
@@ -17,6 +22,10 @@ class App:
             field_value = getattr(self, field)
             if isinstance(field_value, BasePipe):
                 self._pipes[field_value.pipe_id] = field_value
+
+    async def _init_app(self):
+        self._scheduler = await aiojobs.create_scheduler()
+        await self._init_pipes()
 
     async def _init_instances(self):
         self._instances = {}
@@ -31,19 +40,21 @@ class App:
                 instance_cls = getattr(instance_package, instance_cls_name)
 
                 self._instances[instance_name] = instance_cls()
-                await self._instances[instance_name]._init_pipes()
+                await self._instances[instance_name]._init_app()
 
     async def _init_pipes(self):
         for _, pipe in self._pipes.items():
             await pipe.init_pipe(self)
 
-    async def _shutdown_pipes(self):
+    async def _shutdown(self):
+        await self._scheduler.close()
+
         for _, pipe in self._pipes.items():
             await pipe.shutdown_pipe()
 
     async def _run(self):
         await self._init_instances()
-        await self._init_pipes()
+        await self._init_app()
 
     def run(self):
         uvloop.install()
@@ -51,11 +62,12 @@ class App:
         self._loop = asyncio.get_event_loop()
 
         try:
+            logger.info(f'Running app [{self.app_id}]')
             self._loop.run_until_complete(self._run())
             self._loop.run_forever()
         except KeyboardInterrupt:
-            print("Received exit, exiting")
-            self._loop.run_until_complete(self._shutdown_pipes())
+            logger.info(f'Closing app [{self.app_id}]')
+            self._loop.run_until_complete(self._shutdown())
             self._loop.close()
             exit()
 

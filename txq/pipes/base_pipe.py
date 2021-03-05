@@ -37,7 +37,7 @@ class BasePipe:
     def pipe_id(self): return self._pipe_id
 
     async def init_pipe(self, app):
-        pass
+        self._app_id = app.app_id
 
     async def shutdown_pipe(self):
         pass
